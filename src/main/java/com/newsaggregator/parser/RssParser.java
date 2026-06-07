@@ -18,8 +18,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RssParser implements NewsParser {
-    private final String name;
-    private final String rssUrl;
+    private final String name; // источник
+    private final String rssUrl; // ссылка
     private final KeywordExtractor keywordExtractor = new KeywordExtractor();
     private static final Pattern IMG_SRC_PATTERN =
             Pattern.compile("<img[^>]+src=[\"']([^\"']+)[\"']", Pattern.CASE_INSENSITIVE);
@@ -56,8 +56,8 @@ public class RssParser implements NewsParser {
             Elements items = doc.select("item");
 
             if (items.isEmpty()) {
-                System.out.println("RSS не содержит новостей.");
-                return getMockNews();
+                System.out.println("RSS не содержит новостей: " + name);
+                return newsList;
             }
 
             int count = 0;
@@ -93,7 +93,6 @@ public class RssParser implements NewsParser {
 
         } catch (IOException e) {
             System.err.println("Ошибка подключения к RSS " + name + ": " + e.getMessage());
-            return getMockNews();
         }
 
         return newsList;
@@ -184,32 +183,6 @@ public class RssParser implements NewsParser {
         return LocalDateTime.now();
     }
 
-    private List<News> getMockNews() {
-        List<News> mockList = new ArrayList<>();
-        String[][] mockData = {
-                {"Путин подписал закон о цифровых финансах", "Политика"},
-                {"ЦБ улучшил прогноз по ВВП на 2026 год", "Экономика"},
-                {"Российские учёные создали новый материал", "Наука"},
-                {"Сборная России выиграла чемпионат по хоккею", "Спорт"},
-                {"В Москве открылся новый театральный фестиваль", "Культура"},
-                {"Курс рубля укрепился по отношению к доллару", "Экономика"},
-                {"В Госдуму внесли законопроект о поддержке IT", "Политика"},
-                {"Учёные нашли новый способ лечения аллергии", "Наука"}
-        };
-        for (int i = 0; i < mockData.length; i++) {
-            News news = new News(
-                    mockData[i][0],
-                    "Демонстрационная новость для " + name,
-                    "Полный текст новости: " + mockData[i][0],
-                    LocalDateTime.now(),
-                    "https://example.com/demo/" + i,
-                    name
-            );
-            news.setCategory(mockData[i][1]);
-            mockList.add(news);
-        }
-        return mockList;
-    }
 
     private String detectCategory(String title) {
         String lowerTitle = title.toLowerCase();

@@ -56,14 +56,14 @@ class ParserManagerTest {
     @Test
     @Order(1)
     void initialSourceCountIsThree() {
-        assertEquals(3, parserManager.getSourceCount());
+        assertEquals(2, parserManager.getSourceCount());
     }
 
     @Test
     @Order(2)
     void addSourceIncreasesCount() {
         parserManager.addSource("Тест", "https://test.com/rss");
-        assertEquals(4, parserManager.getSourceCount());
+        assertEquals(3, parserManager.getSourceCount());
     }
 
     @Test
@@ -71,7 +71,7 @@ class ParserManagerTest {
     void addParserIncreasesCount() {
         NewsParser mp = mockParser("МокИсточник", "https://mock.com/1");
         parserManager.addParser(mp);
-        assertEquals(4, parserManager.getSourceCount());
+        assertEquals(3, parserManager.getSourceCount());
     }
 
     @Test

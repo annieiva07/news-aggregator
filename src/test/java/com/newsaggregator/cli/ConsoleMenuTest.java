@@ -374,14 +374,14 @@ class ConsoleMenuTest {
     @Test
     @Order(42)
     void addNewsManuallyWorks() {
-        String out = run("13\nРучной заголовок\nОписание\nТекст\nСайт\nКатегория\n0\n");
+        String out = run("13\nРучной заголовок\nОписание\nТекст\nСайт\nКатегория\nhttps://manual.test.com/1\n0\n");
         assertTrue(out.contains("добавлена") || out.contains("ДОБАВЛЕНИЕ"));
     }
 
     @Test
     @Order(43)
     void addNewsManuallyEmptyCategoryUsesDefault() {
-        String out = run("13\nБез категории заголовок\nОпис\nТекст\nСайт\n\n0\n");
+        String out = run("13\nБез категории заголовок\nОпис\nТекст\nСайт\n\nhttps://manual.cat.test.com/1\n0\n");
         assertTrue(out.contains("добавлена"));
     }
 
@@ -464,7 +464,7 @@ class ConsoleMenuTest {
         NewsRepository mockRepo = Mockito.mock(NewsRepository.class);
         when(mockRepo.save(any(News.class))).thenReturn(false);
         ConsoleMenu menu = new ConsoleMenu(mockRepo, parserManager, analyticsService, schedulerService);
-        String out = runMenu(menu, "13\nЗаголовок теста\nОписание\nТекст\nИсточник\nКатегория\n0\n");
+        String out = runMenu(menu, "13\nЗаголовок теста\nОписание\nТекст\nИсточник\nКатегория\nhttps://fail.test.com/1\n0\n");
         assertTrue(out.contains("Не удалось"));
     }
 }

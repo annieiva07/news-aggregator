@@ -51,6 +51,7 @@ public class ConsoleMenu {
                 case "11" -> manageSources();
                 case "12" -> exportNews();
                 case "13" -> addTestNews();
+                case "14" -> clearDatabase();
                 case "0" -> {
                     System.out.println("Выход из программы.");
                     return;
@@ -75,6 +76,7 @@ public class ConsoleMenu {
         System.out.println("11. Управление источниками");
         System.out.println("12. Экспорт данных (CSV/JSON/HTML)");
         System.out.println("13. Добавить новость вручную");
+        System.out.println("14. Очистить базу данных");
         System.out.println("0.  Выход");
         System.out.print("Выберите действие: ");
     }
@@ -425,11 +427,16 @@ public class ConsoleMenu {
         String sourceName = scanner.nextLine().trim();
         System.out.print("Категория: ");
         String category = scanner.nextLine().trim();
+        System.out.print("Ссылка на источник (необязательно, Enter чтобы пропустить): ");
+        String sourceUrl = scanner.nextLine().trim();
+        if (sourceUrl.isEmpty()) {
+            sourceUrl = "manual:" + System.currentTimeMillis();
+        }
 
         News news = new News(
                 title, description, fullText,
                 LocalDateTime.now(),
-                "https://manual/" + System.currentTimeMillis(),
+                sourceUrl,
                 sourceName
         );
         news.setCategory(category.isEmpty() ? "Без категории" : category);
@@ -438,6 +445,16 @@ public class ConsoleMenu {
             System.out.println("Новость успешно добавлена!");
         } else {
             System.out.println("Не удалось добавить новость.");
+        }
+    }
+
+    private void clearDatabase() {
+        System.out.print("Вы уверены? Все новости будут удалены. (да/нет): ");
+        String confirm = scanner.nextLine().trim().toLowerCase();
+        if (confirm.equals("да")) {
+            repository.deleteAll();
+        } else {
+            System.out.println("Отменено.");
         }
     }
 

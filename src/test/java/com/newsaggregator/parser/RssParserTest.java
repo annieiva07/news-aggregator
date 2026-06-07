@@ -28,13 +28,6 @@ class RssParserTest {
         return (LocalDateTime) method.invoke(parser, new Object[]{dateStr});
     }
 
-    @SuppressWarnings("unchecked")
-    private List<News> invokeMockNews() throws Exception {
-        Method method = RssParser.class.getDeclaredMethod("getMockNews");
-        method.setAccessible(true);
-        return (List<News>) method.invoke(parser);
-    }
-
     private String invokeCategory(String title) throws Exception {
         Method method = RssParser.class.getDeclaredMethod("detectCategory", String.class);
         method.setAccessible(true);
@@ -180,29 +173,6 @@ class RssParserTest {
 
     // ---------- getMockNews ----------
 
-    @Test
-    void getMockNewsReturnsNonEmptyList() throws Exception {
-        List<News> mockList = invokeMockNews();
-        assertFalse(mockList.isEmpty());
-    }
-
-    @Test
-    void getMockNewsHasCorrectSourceName() throws Exception {
-        List<News> mockList = invokeMockNews();
-        assertTrue(mockList.stream().allMatch(n -> "Тест".equals(n.getSourceName())));
-    }
-
-    @Test
-    void getMockNewsHasCategories() throws Exception {
-        List<News> mockList = invokeMockNews();
-        assertTrue(mockList.stream().allMatch(n -> n.getCategory() != null && !n.getCategory().isEmpty()));
-    }
-
-    @Test
-    void getMockNewsHasTitles() throws Exception {
-        List<News> mockList = invokeMockNews();
-        assertTrue(mockList.stream().allMatch(n -> n.getTitle() != null && !n.getTitle().isEmpty()));
-    }
 
     // ---------- getSourceName ----------
 
@@ -241,7 +211,6 @@ class RssParserTest {
             mocked.when(() -> Jsoup.connect(anyString())).thenReturn(c);
             List<News> result = parser.parseNews();
             assertNotNull(result);
-            assertFalse(result.isEmpty());
         }
     }
 
@@ -253,7 +222,6 @@ class RssParserTest {
             mocked.when(() -> Jsoup.connect(anyString())).thenReturn(mockConn);
             List<News> result = parser.parseNews();
             assertNotNull(result);
-            assertFalse(result.isEmpty());
         }
     }
 

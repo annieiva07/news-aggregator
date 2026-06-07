@@ -34,19 +34,39 @@ public class AnalyticsService {
 
     public Map<String, Integer> getKeywordDynamics(String keyword, int days) {
         Map<String, Integer> dynamics = new LinkedHashMap<>();
+        String lowerKeyword = keyword.toLowerCase();
+
+        LocalDateTime rangeStart = LocalDateTime.now().minusDays(days - 1).toLocalDate().atStartOfDay();
+        LocalDateTime rangeEnd = LocalDateTime.now().toLocalDate().atTime(23, 59, 59);
+        List<News> allNews = repository.findByDateRange(rangeStart, rangeEnd);
 
         for (int i = days - 1; i >= 0; i--) {
             LocalDateTime start = LocalDateTime.now().minusDays(i).toLocalDate().atStartOfDay();
             LocalDateTime end = start.plusDays(1).minusSeconds(1);
-            List<News> matches = repository.searchByKeyword(keyword).stream()
+
+            long count = allNews.stream()
                     .filter(n -> n.getPublishDate() != null
                             && !n.getPublishDate().isBefore(start)
                             && !n.getPublishDate().isAfter(end))
-                    .collect(Collectors.toList());
-            dynamics.put(start.toLocalDate().toString(), matches.size());
+                    .filter(n -> containsKeyword(n, lowerKeyword))
+                    .count();
+
+            dynamics.put(start.toLocalDate().toString(), (int) count);
         }
 
         return dynamics;
+    }
+
+    private boolean containsKeyword(News news, String lowerKeyword) {
+        if (news.getTitle() != null && news.getTitle().toLowerCase().contains(lowerKeyword)) return true;
+        if (news.getDescription() != null && news.getDescription().toLowerCase().contains(lowerKeyword)) return true;
+        if (news.getFullText() != null && news.getFullText().toLowerCase().contains(lowerKeyword)) return true;
+        if (news.getKeywords() != null) {
+            for (String kw : news.getKeywords()) {
+                if (kw.toLowerCase().contains(lowerKeyword)) return true;
+            }
+        }
+        return false;
     }
 
     public Map<String, Integer> getCountByCategory() {

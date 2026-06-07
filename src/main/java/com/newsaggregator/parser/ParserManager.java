@@ -17,7 +17,6 @@ public class ParserManager {
 
         parsers.add(new RssParser("ТАСС", "https://tass.ru/rss/v2.xml"));
         parsers.add(new RssParser("Интерфакс", "https://www.interfax.ru/rss.asp"));
-        parsers.add(new RssParser("Вести.Ru", "http://www.vesti.ru/vesti.rss"));
     }
 
     public void addSource(String name, String rssUrl) {

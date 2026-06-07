@@ -180,7 +180,7 @@ public class News {
                 description != null && description.length() > 80 ?
                         description.substring(0, 77) + "..." : description,
                 sourceName));
-        if (sourceUrl != null && !sourceUrl.isEmpty()) {
+        if (sourceUrl != null && !sourceUrl.isEmpty() && !sourceUrl.startsWith("manual:")) {
             sb.append("\n    Ссылка: ").append(sourceUrl);
         }
         if (mediaUrls != null && !mediaUrls.isEmpty()) {

@@ -97,8 +97,8 @@ public class NewsRepository {
 
     // Поиск по ключевым словам
     public List<News> searchByKeyword(String keyword) {
-        String sql = "SELECT * FROM news WHERE title LIKE ? OR full_text LIKE ? OR description LIKE ? ORDER BY publish_date DESC";
-        String likePattern = "%" + keyword + "%";
+        String sql = "SELECT * FROM news WHERE LOWER(title) LIKE ? OR LOWER(full_text) LIKE ? OR LOWER(description) LIKE ? ORDER BY publish_date DESC";
+        String likePattern = "%" + keyword.toLowerCase() + "%";
         return findBySql(sql, new String[]{likePattern, likePattern, likePattern});
     }
 
@@ -178,6 +178,18 @@ public class NewsRepository {
             return deleted;
         } catch (SQLException e) {
             System.err.println("Ошибка удаления: " + e.getMessage());
+            return 0;
+        }
+    }
+
+    public int deleteAll() {
+        String sql = "DELETE FROM news";
+        try (PreparedStatement pstmt = DatabaseConnection.getConnection().prepareStatement(sql)) {
+            int deleted = pstmt.executeUpdate();
+            System.out.println("Удалено " + deleted + " новостей");
+            return deleted;
+        } catch (SQLException e) {
+            System.err.println("Ошибка очистки базы: " + e.getMessage());
             return 0;
         }
     }
